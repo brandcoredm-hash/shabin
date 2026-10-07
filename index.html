@@ -103,7 +103,120 @@ footer a{text-decoration:none}footer a:hover{color:var(--sun)}
 .float svg{width:24px;height:24px;fill:#fff}
 </style>
 </head>
-  <script src="marketing-addons.js" defer></script>
+  /* Brandcore marketing add-ons. Add before </body>:  <script src="marketing-addons.js" defer></script> */
+(function () {
+  // ====== EDIT THESE ======
+  var WHATSAPP = "910000000000";          // country code + number, no + or spaces
+  var PHONE = "+910000000000";
+  var SITE = "https://www.brandcoreagency.com/";   // your live domain
+  var LEAD_MAGNET = "Free 30-point Instagram & Ads Checklist";
+  // ========================
+
+  var dl = (window.dataLayer = window.dataLayer || []);
+  function track(ev, data) { dl.push(Object.assign({ event: ev }, data || {})); }
+  function el(html) { var t = document.createElement("div"); t.innerHTML = html.trim(); return t.firstChild; }
+  function head(node) { document.head.appendChild(node); }
+
+  /* 1. SEO: Open Graph, Twitter card, canonical */
+  [["og:type", "website"], ["og:title", document.title], ["og:url", SITE],
+   ["og:description", (document.querySelector('meta[name="description"]') || {}).content || ""],
+   ["twitter:card", "summary_large_image"]].forEach(function (m) {
+    var x = document.createElement("meta");
+    x.setAttribute(m[0].indexOf("og:") === 0 ? "property" : "name", m[0]);
+    x.content = m[1]; head(x);
+  });
+  if (!document.querySelector('link[rel=canonical]')) { var c = document.createElement("link"); c.rel = "canonical"; c.href = SITE; head(c); }
+
+  /* 2. SEO: structured data (business + FAQ rich results) */
+  var faqs = [].map.call(document.querySelectorAll("#faq details"), function (d) {
+    return { "@type": "Question", name: d.querySelector("summary").textContent.trim(),
+      acceptedAnswer: { "@type": "Answer", text: d.querySelector("p").textContent.trim() } };
+  });
+  var ld = document.createElement("script"); ld.type = "application/ld+json";
+  ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@graph": [
+    { "@type": "ProfessionalService", name: "Brandcore Marketing Agency", url: SITE,
+      description: "Full-service digital marketing agency: social media, performance ads, SEO, branding and video.",
+      sameAs: ["https://www.facebook.com/share/1DYgoS2yut/", "https://www.instagram.com/brandcore_marketing_agency"],
+      email: "hello@brandcoreagency.com", areaServed: "IN" },
+    { "@type": "FAQPage", mainEntity: faqs }] });
+  head(ld);
+
+  /* 3. Styles for new elements */
+  var css = document.createElement("style");
+  css.textContent =
+    ".wa{position:fixed;left:18px;bottom:18px;z-index:61;background:#25d366;color:#fff;border-radius:100px;padding:12px 18px;font-weight:700;text-decoration:none;box-shadow:0 8px 20px -6px rgba(0,0,0,.4);display:flex;gap:8px;align-items:center}" +
+    ".mcta{display:none;position:fixed;left:0;right:0;bottom:0;z-index:62;background:var(--ink);padding:10px 14px;gap:10px}" +
+    ".mcta a{flex:1;text-align:center;padding:12px;border-radius:100px;font-weight:700;text-decoration:none;color:#fff;background:var(--org)}" +
+    ".mcta a+a{background:#25d366}" +
+    "@media(max-width:700px){.mcta{display:flex}.wa{display:none}.float{bottom:76px}}" +
+    ".pk{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}" +
+    ".pk>div{background:#fff;border:1px solid var(--line);border-radius:22px;padding:30px;display:flex;flex-direction:column}" +
+    ".pk>div.hot{border:2px solid var(--org);box-shadow:0 20px 50px -25px rgba(255,106,26,.5)}" +
+    ".pk h3{font-size:1.15rem}.pk small{color:var(--org2);font-weight:700}.pk ul{padding:0;margin:18px 0 24px;list-style:none;display:grid;gap:8px;flex:1;font-size:.95rem}" +
+    ".pk li:before{content:'✓ ';color:var(--org2);font-weight:800}" +
+    "@media(max-width:900px){.pk{grid-template-columns:1fr}}" +
+    ".pop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.6);display:none;place-items:center;padding:20px}" +
+    ".pop.show{display:grid}.pop .card{max-width:440px;width:100%;position:relative}" +
+    ".pop .x{position:absolute;top:10px;right:14px;background:none;border:0;font-size:1.6rem;cursor:pointer}";
+  head(css);
+
+  /* 4. WhatsApp button + sticky mobile CTA bar */
+  var wl = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent("Hi Brandcore, I'd like a free marketing audit.");
+  document.body.appendChild(el('<a class="wa" data-track="whatsapp" href="' + wl + '" target="_blank" rel="noopener">💬 Chat on WhatsApp</a>'));
+  document.body.appendChild(el('<div class="mcta"><a data-track="mobile_audit" href="#contact">Free audit</a><a data-track="whatsapp" href="' + wl + '" target="_blank" rel="noopener">WhatsApp</a></div>'));
+
+  /* 5. Packages section (before case studies). No prices invented: quote after audit */
+  var work = document.getElementById("work");
+  if (work) {
+    work.parentNode.insertBefore(el(
+      '<section id="packages"><div class="wrap"><div class="sh"><h2>Packages built around your goal.</h2><p>Pick a starting point. Every plan is quoted after your free audit, with ad spend paid directly to Meta or Google.</p></div><div class="pk">' +
+      '<div><small>For new brands</small><h3>Starter</h3><ul><li>Social media management</li><li>12 posts + stories a month</li><li>Basic brand kit</li><li>Monthly report</li></ul><a class="btn line" data-track="package_starter" href="#contact">Get a quote</a></div>' +
+      '<div class="hot"><small>Most popular</small><h3>Growth</h3><ul><li>Everything in Starter</li><li>Meta &amp; Google Ads management</li><li>4 reels a month</li><li>Landing page + lead tracking</li><li>SEO basics + Google Business Profile</li></ul><a class="btn" data-track="package_growth" href="#contact">Get a quote</a></div>' +
+      '<div><small>For scaling brands</small><h3>Scale</h3><ul><li>Everything in Growth</li><li>Full SEO &amp; content plan</li><li>Influencer campaigns</li><li>Weekly strategy call</li><li>Conversion rate testing</li></ul><a class="btn line" data-track="package_scale" href="#contact">Get a quote</a></div>' +
+      '</div></div></section>'), work);
+  }
+
+  /* 6. Lead-magnet popup (exit intent on desktop, 35s timer on mobile, once per session) */
+  var pop = el('<div class="pop" role="dialog" aria-modal="true" aria-label="Free checklist"><div class="card"><button class="x" aria-label="Close">×</button>' +
+    '<h3>' + LEAD_MAGNET + '</h3><p>The exact checklist we use in our audits. Enter your email and we will send it.</p>' +
+    '<form action="mailto:hello@brandcoreagency.com" method="post" enctype="text/plain" data-form="lead_magnet">' +
+    '<input type="hidden" name="request" value="' + LEAD_MAGNET + '"><label for="lm">Email</label><input id="lm" name="email" type="email" required autocomplete="email">' +
+    '<button class="btn" type="submit">Send me the checklist</button></form></div></div>');
+  document.body.appendChild(pop);
+  function openPop() {
+    try { if (sessionStorage.getItem("popSeen")) return; sessionStorage.setItem("popSeen", "1"); } catch (e) {}
+    pop.classList.add("show"); track("popup_view");
+  }
+  pop.querySelector(".x").onclick = function () { pop.classList.remove("show"); };
+  pop.addEventListener("click", function (e) { if (e.target === pop) pop.classList.remove("show"); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") pop.classList.remove("show"); });
+  document.addEventListener("mouseout", function (e) { if (e.clientY < 0 && !e.relatedTarget) openPop(); });
+  setTimeout(function () { if (window.innerWidth < 700) openPop(); }, 35000);
+
+  /* 7. Capture UTM / click IDs into every form */
+  var qs = new URLSearchParams(location.search), keys = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid", "fbclid"];
+  document.querySelectorAll("form").forEach(function (f) {
+    keys.forEach(function (k) { if (qs.get(k)) { var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = qs.get(k); f.appendChild(i); } });
+    var r = document.createElement("input"); r.type = "hidden"; r.name = "landing_referrer"; r.value = document.referrer || "direct"; f.appendChild(r);
+    f.addEventListener("submit", function () { track("generate_lead", { form: f.getAttribute("data-form") || f.closest("section,div.card").id || "audit_form" }); });
+  });
+
+  /* 8. GTM event tracking: CTA, phone, email, WhatsApp, social, scroll depth */
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("a"); if (!a) return;
+    var h = a.getAttribute("href") || "", t = a.getAttribute("data-track");
+    if (t) track("cta_click", { cta: t });
+    else if (h.indexOf("tel:") === 0) track("click_phone");
+    else if (h.indexOf("mailto:") === 0) track("click_email");
+    else if (/instagram|facebook/.test(h)) track("click_social", { url: h });
+    else if (a.classList.contains("btn")) track("cta_click", { cta: a.textContent.trim() });
+  });
+  var seen = {};
+  addEventListener("scroll", function () {
+    var p = Math.round(scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight) * 100);
+    [25, 50, 75, 90].forEach(function (m) { if (p >= m && !seen[m]) { seen[m] = 1; track("scroll_depth", { percent: m }); } });
+  }, { passive: true });
+})();
 <body>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K3L6NDGB" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
